@@ -7,15 +7,26 @@
 
 import SwiftUI
 
+
+
 struct Clock: View {
     
     @State var w: CGFloat
     @State var lw_h: CGFloat
     @State var lw_m: CGFloat
     @State var lw_s: CGFloat
-    @State private var now = Date()
+    @State var now = Date()
+    @State var started: Bool = true
+
+    @State var workDuration: Double = 2
+    @State var startSess: Double = 0
+
+    let lg = LinearGradient(colors: [Color(red: 1, green: 1, blue: 1, opacity: 0.1), Color(red: 0.3, green: 0.3, blue: 0.3, opacity: 0.2)], startPoint: .trailing, endPoint: .leading)
+    
     private let timer = Timer.publish(every: 1, on: .main, in: .common)
         .autoconnect()
+    
+    @State var b: Double = 0
     
     var body: some View {
         let cal = Calendar.current
@@ -28,35 +39,43 @@ struct Clock: View {
         let m = cal.component(.minute, from: now)
         let h = cal.component(.hour, from: now) < 12 ? cal.component(.hour, from: now) : cal.component(.hour, from: now) - 12
         
+        let minSessionString = (workDuration * 60 - startSess) / 60 < 10 ? "0\(Int(workDuration * 60 - startSess) / 60)" : "\(Int(workDuration * 60 - startSess) / 60)"
+        let secSessionString = Int(60*(workDuration - Double(minSessionString)!) - startSess) >= 10 ? String(Int(60*(workDuration - Double(minSessionString)!) - startSess)) : String("0\(Int(60*(workDuration - Double(minSessionString)!) - startSess))")
+        
         ZStack {
+            ZStack {
+                Gauge(value: started ? startSess : 0, in: 0...workDuration*60) { }
+                    .gaugeStyle(ClockGaugeStyle(gradient: LinearGradient(colors: [.orange, .yellow], startPoint: .trailing, endPoint: .leading), lw: lw_h + 1))
+                    .animation(.linear(duration: 1), value: startSess)
+                    .frame(width: w-76)
+                    .onReceive(timer, perform: { _ in
+                        if started && startSess < workDuration*60 {
+                            startSess += 1
+                        } else {
+                            startSess = 0
+                        }
+                })
+                Text("\(minSessionString) : \(secSessionString)")
+            }
+                
             Gauge(value: Double(h) + (Double(m)/60 + Double(s)/3600), in: 0...12) { }
-                .gaugeStyle(ClockGaugeStyle(gradient: LinearGradient(colors: [.indigo, .blue], startPoint: .trailing, endPoint: .leading), lw: lw_h))
+                .gaugeStyle(ClockGaugeStyle(gradient: started ? lg : LinearGradient(colors: [.indigo, .blue], startPoint: .trailing, endPoint: .leading), lw: lw_h))
                 .animation(.linear(duration: 1), value: s)
                 .frame(width: w - 100)
             Gauge(value: Double(m) + Double(s) / 60.0, in: 0...60) { }
-                .gaugeStyle(ClockGaugeStyle(gradient: LinearGradient(colors: [.purple, .blue], startPoint: .trailing, endPoint: .leading), lw: lw_m))
+                .gaugeStyle(ClockGaugeStyle(gradient: started ? lg : LinearGradient(colors: [.purple, .blue], startPoint: .trailing, endPoint: .leading), lw: lw_m))
                 .animation(.linear(duration: 1), value: s)
                 .frame(width: w - (100+lw_h+lw_m) - lw_m)
             Gauge(value: Double(s), in: 0...60) { }
-                .gaugeStyle(ClockGaugeStyle(gradient: LinearGradient(colors: [.teal, .blue], startPoint: .trailing, endPoint: .leading), lw: lw_s))
+                .gaugeStyle(ClockGaugeStyle(gradient: started ? lg : LinearGradient(colors: [.teal, .blue], startPoint: .trailing, endPoint: .leading), lw: lw_s))
                 .animation(.linear(duration: 1), value: s)
                 .frame(width: w - (100+lw_h+lw_m+lw_s) - (lw_h+lw_m+lw_s))
-            if (w > 150) {
-                Text("\(hour_string) : \(minute_string) : \(second_string)")
-                    .font(.system(size: w / 20, weight: .heavy))
-                    .foregroundStyle(Color(red: 0.4, green: 0.4, blue: 0.4, opacity: 0.4))
-                    .onReceive(timer, perform: { time in
-                        now = time
-                    })
-            } else {
-                Text("\(hour_string) : \(minute_string) : \(second_string)")
-                    .hidden()
-                    .font(.system(size: w / 20, weight: .heavy))
-                    .foregroundStyle(Color(red: 0.4, green: 0.4, blue: 0.4, opacity: 0.4))
-                    .onReceive(timer, perform: { time in
-                        now = time
-                    })
-            }
+            Text("\(hour_string) : \(minute_string) : \(second_string)")
+                .font(.system(size: 20, weight: .heavy))
+                .foregroundStyle(Color(red: 0.4, green: 0.4, blue: 0.4, opacity: 0.4))
+                .onReceive(timer, perform: { time in
+                    now = time
+                })
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }

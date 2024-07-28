@@ -12,33 +12,60 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
     
-    let gradient = Gradient(colors: [.pink, .blue])
-    @State var wdth: CGFloat = 0
+    @State var started: Bool = false
     
     func start() {
-        wdth = 100
+        started = true
     }
     
     var body: some View {
         VStack {
-            if (wdth == 100) {
-                Clock(w: 150, lw_h: 4, lw_m: 3, lw_s: 2)
-                    .frame(maxWidth: 50, maxHeight: 50)
-                    .position(x: 30, y: 30)
+            if (started) {
+                Clock(w: 300, lw_h: 8, lw_m: 6, lw_s: 4, started: true)
+                    .frame(maxWidth: 300, maxHeight: 300)
+                    .padding()
             } else {
-                Clock(w: 300, lw_h: 8, lw_m: 6, lw_s: 4)
+                Clock(w: 300, lw_h: 8, lw_m: 6, lw_s: 4, started: false)
                     .frame(maxWidth: 200, maxHeight: 200)
-            }
-            HStack {
-                Button("Start Session", action: start)
-                Button("\(Image(systemName: "gearshape.fill"))", action: start)
-                    .frame(width: 40, height: 40)
-                    .background(Color(red: 0, green: 0.5, blue: 0.5))
                     .padding()
             }
-            
+            HStack {
+                Button("Start Session") { 
+                    started.toggle()
+                }
+                    .buttonStyle(startStyle())
+                Button(action: start) {
+                    Image(systemName: "gearshape.fill")
+                        .resizable()
+                        .frame(width: 20, height: 20)
+                }
+                .buttonStyle(confStyle())
+                .padding(.leading, 20)
+            }
+            .padding()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+struct confStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+        .font(.system(size: 12))
+        .frame(width: 40, height: 40)
+        .background(.blue)
+        .foregroundStyle(.white)
+        .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
+    }
+}
+struct startStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+        .font(.system(size: 14))
+        .frame(width: 120, height: 40)
+        .background(.blue)
+        .foregroundStyle(.white)
+        .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
     }
 }
 
