@@ -26,7 +26,7 @@ struct ContentView: View {
                     .padding()
             } else {
                 Clock(w: 300, lw_h: 8, lw_m: 6, lw_s: 4, started: false)
-                    .frame(maxWidth: 200, maxHeight: 200)
+                    .frame(maxWidth: 300, maxHeight: 300)
                     .padding()
             }
             HStack {
