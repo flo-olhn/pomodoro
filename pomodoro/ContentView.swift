@@ -12,28 +12,41 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
     
-    @State var started: Bool = false
+    @State var s: Bool = false
     
     func start() {
-        started = true
+        s.toggle()
+    }
+    
+    func config() {
+        print("config")
     }
     
     var body: some View {
         VStack {
-            Clock(w: 300, lw_h: 8, lw_m: 6, lw_s: 4, started: started)
-                .frame(maxWidth: 300, maxHeight: 300)
-                .padding()
+            if (s) {
+                Clock(w: 300, lw_h: 8, lw_m: 6, lw_s: 4, started: true)
+            } else {
+                Clock(w: 300, lw_h: 8, lw_m: 6, lw_s: 4, started: false)
+            }
             HStack {
-                Button("Start Session") { 
-                    started.toggle()
-                }
+                Button(s ? "Stop Session" : "Start Session", action: start)
                 .buttonStyle(startStyle())
-                Button(action: start) {
+                .background(s ? .pink : .blue)
+                .animation(.easeIn(duration: 0.3), value: s)
+                .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
+                
+                Button(action: config) {
                     Image(systemName: "gearshape.fill")
                         .resizable()
-                        .frame(width: 20, height: 20)
+                        .frame(width: 16, height: 16)
+                        .foregroundColor(s ? Color(red: 0.5, green: 0.5, blue: 0.5, opacity: 1) : .white)
                 }
                 .buttonStyle(confStyle())
+                .disabled(s)
+                .background(s ? Color(red: 0.3, green: 0.3, blue: 0.3, opacity: 0.5) : .blue)
+                .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
+                .animation(.easeIn(duration: 0.3), value: s)
                 .padding(.leading, 20)
             }
             .padding()
@@ -47,9 +60,6 @@ struct confStyle: ButtonStyle {
         configuration.label
         .font(.system(size: 12))
         .frame(width: 40, height: 40)
-        .background(.blue)
-        .foregroundStyle(.white)
-        .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
     }
 }
 struct startStyle: ButtonStyle {
@@ -57,9 +67,6 @@ struct startStyle: ButtonStyle {
         configuration.label
         .font(.system(size: 14))
         .frame(width: 120, height: 40)
-        .background(.blue)
-        .foregroundStyle(.white)
-        .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
     }
 }
 

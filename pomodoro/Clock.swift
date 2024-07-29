@@ -16,11 +16,11 @@ struct Clock: View {
     @State var lw_m: CGFloat
     @State var lw_s: CGFloat
     @State var now = Date()
-    @State var started: Bool = true
+    @State var started: Bool
 
-    @State var workDuration: Double = 1
-    @State var shortPause: Double = 0.5
-    @State var longPause: Double = 1
+    @State var workDuration: Double = 3
+    @State var shortPause: Double = 1
+    @State var longPause: Double = 2
     @State var workCnt: Int = 0
     @State var isWorkDone: Bool = false
     @State var startSess: Double = 0
@@ -43,7 +43,9 @@ struct Clock: View {
         
         let minSessionString = (!isWorkDone ?
                                 (workDuration * 60 - startSess) / 60 < 10 ? "0\(Int(workDuration * 60 - startSess) / 60)" : "\(Int(workDuration * 60 - startSess) / 60)" :
-                                (shortPause * 60 - startSess) / 60 < 10 ? "0\(Int(shortPause * 60 - startSess) / 60)" : "\(Int(shortPause * 60 - startSess) / 60)")
+                                (workCnt % 4 == 0 ?
+                                 (longPause * 60 - startSess) / 60 < 10 ? "0\(Int(longPause * 60 - startSess) / 60)" : "\(Int(longPause * 60 - startSess) / 60)" :
+                                (shortPause * 60 - startSess) / 60 < 10 ? "0\(Int(shortPause * 60 - startSess) / 60)" : "\(Int(shortPause * 60 - startSess) / 60)"))
         let secSessionString = (!isWorkDone ?
                                 Int(60*(workDuration - Double(minSessionString)!) - startSess) >= 10 ? String(Int(60*(workDuration - Double(minSessionString)!) - startSess)) : String("0\(Int(60*(workDuration - Double(minSessionString)!) - startSess))") :
                                 (workCnt % 4 == 0 ?
@@ -53,19 +55,21 @@ struct Clock: View {
         
         ZStack {
             ZStack {
-                 Gauge(value: started ? startSess : 0, in: started && isWorkDone ?
-                       (workCnt % 4 == 0 ?
-                         0...longPause*60 :
-                         0...shortPause*60) : 0...workDuration*60) { }
-                    .gaugeStyle(ClockGaugeStyle(gradient: LinearGradient(colors: [.pink, .pink], startPoint: .leading, endPoint: .trailing), lw: lw_h + 4))
-                    .animation(.linear(duration: 1), value: startSess)
-                    .frame(width: w-74)
-                    .opacity(isWorkDone ? 1 : 0)
-                Gauge(value: started ? startSess : 0, in: started && isWorkDone ? 0...shortPause*60 : 0...workDuration*60) { }
+                Gauge(value: started ? startSess : 0, in: 0...workDuration*60) { }
                     .gaugeStyle(ClockGaugeStyle(gradient: LinearGradient(colors: [.blue, .blue], startPoint: .leading, endPoint: .trailing), lw: lw_h + 4))
+                    .opacity(started && !isWorkDone ? 1 : 0)
                     .animation(.linear(duration: 1), value: startSess)
                     .frame(width: w-74)
-                    .opacity(isWorkDone ? 0 : 1)
+                Gauge(value: started ? startSess : 0, in: 0...longPause*60) { }
+                    .gaugeStyle(ClockGaugeStyle(gradient: LinearGradient(colors: [.green, .green], startPoint: .leading, endPoint: .trailing), lw: lw_h + 4))
+                    .opacity(started && isWorkDone && workCnt % 4 == 0 ? 1 : 0)
+                    .animation(.linear(duration: 1), value: startSess)
+                    .frame(width: w-74)
+                Gauge(value: started ? startSess : 0, in: 0...shortPause*60) { }
+                    .gaugeStyle(ClockGaugeStyle(gradient: LinearGradient(colors: [.pink, .pink], startPoint: .leading, endPoint: .trailing), lw: lw_h + 4))
+                    .opacity(started && isWorkDone && workCnt % 4 != 0 ? 1 : 0)
+                    .animation(.linear(duration: 1), value: startSess)
+                    .frame(width: w-74)
                     .onReceive(timer, perform: { _ in
                         if started {
                             if !isWorkDone {
@@ -75,7 +79,6 @@ struct Clock: View {
                                     startSess = 0
                                     workCnt += 1
                                     isWorkDone = true
-                                    print(workCnt)
                                 }
                             } else {
                                 if (workCnt % 4 == 0) {
@@ -98,15 +101,16 @@ struct Clock: View {
                     })
                 
                 VStack(spacing: 10) {
-                    Text(started && !isWorkDone ? "Focus" : "Break")
+                    Text(started && !isWorkDone ? "Focus" : (workCnt % 4 == 0 ? "Long Break" : "Short Break"))
                         .font(.system(size: 16, weight: .regular))
                         .opacity(started ? 1 : 0)
+                        .animation(.linear(duration: 1), value: isWorkDone)
                     Text("\(minSessionString) : \(secSessionString)")
                         .font(.system(size: 20, weight: .heavy))
-                        .animation(.smooth(duration: 1), value: s)
                         .opacity(started ? 1 : 0)
+                        .animation(.linear(duration: 1), value: isWorkDone)
                 }
-                .foregroundStyle(!isWorkDone ? .blue : .pink)
+                .foregroundStyle(!isWorkDone ? .blue : workCnt % 4 == 0 ? .green : .pink)
             }
                 
             Gauge(value: Double(h) + (Double(m)/60 + Double(s)/3600), in: 0...12) { }
@@ -149,6 +153,10 @@ struct ClockGaugeStyle: GaugeStyle {
     }
 }
 
-#Preview {
-    Clock(w: 300, lw_h: 8, lw_m: 6, lw_s: 4)
+#Preview("Started") {
+    Clock(w: 300, lw_h: 8, lw_m: 6, lw_s: 4, started: true)
+}
+
+#Preview("Not started") {
+    Clock(w: 300, lw_h: 8, lw_m: 6, lw_s: 4, started: false)
 }
