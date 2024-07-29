@@ -20,20 +20,14 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            if (started) {
-                Clock(w: 300, lw_h: 8, lw_m: 6, lw_s: 4, started: true)
-                    .frame(maxWidth: 300, maxHeight: 300)
-                    .padding()
-            } else {
-                Clock(w: 300, lw_h: 8, lw_m: 6, lw_s: 4, started: false)
-                    .frame(maxWidth: 300, maxHeight: 300)
-                    .padding()
-            }
+            Clock(w: 300, lw_h: 8, lw_m: 6, lw_s: 4, started: started)
+                .frame(maxWidth: 300, maxHeight: 300)
+                .padding()
             HStack {
                 Button("Start Session") { 
                     started.toggle()
                 }
-                    .buttonStyle(startStyle())
+                .buttonStyle(startStyle())
                 Button(action: start) {
                     Image(systemName: "gearshape.fill")
                         .resizable()

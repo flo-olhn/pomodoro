@@ -20,6 +20,8 @@ struct Clock: View {
 
     @State var workDuration: Double = 1
     @State var shortPause: Double = 0.5
+    @State var longPause: Double = 1
+    @State var workCnt: Int = 0
     @State var isWorkDone: Bool = false
     @State var startSess: Double = 0
 
@@ -44,11 +46,17 @@ struct Clock: View {
                                 (shortPause * 60 - startSess) / 60 < 10 ? "0\(Int(shortPause * 60 - startSess) / 60)" : "\(Int(shortPause * 60 - startSess) / 60)")
         let secSessionString = (!isWorkDone ?
                                 Int(60*(workDuration - Double(minSessionString)!) - startSess) >= 10 ? String(Int(60*(workDuration - Double(minSessionString)!) - startSess)) : String("0\(Int(60*(workDuration - Double(minSessionString)!) - startSess))") :
-                                    Int(60*(shortPause - Double(minSessionString)!) - startSess) >= 10 ? String(Int(60*(shortPause - Double(minSessionString)!) - startSess)) : String("0\(Int(60*(shortPause - Double(minSessionString)!) - startSess))"))
+                                (workCnt % 4 == 0 ?
+                                 Int(60*(longPause - Double(minSessionString)!) - startSess) >= 10 ? String(Int(60*(longPause - Double(minSessionString)!) - startSess)) : String("0\(Int(60*(longPause - Double(minSessionString)!) - startSess))") :
+                                Int(60*(shortPause - Double(minSessionString)!) - startSess) >= 10 ? String(Int(60*(shortPause - Double(minSessionString)!) - startSess)) : String("0\(Int(60*(shortPause - Double(minSessionString)!) - startSess))")))
+                                    
         
         ZStack {
             ZStack {
-                 Gauge(value: started ? startSess : 0, in: started && isWorkDone ? 0...shortPause*60 : 0...workDuration*60) { }
+                 Gauge(value: started ? startSess : 0, in: started && isWorkDone ?
+                       (workCnt % 4 == 0 ?
+                         0...longPause*60 :
+                         0...shortPause*60) : 0...workDuration*60) { }
                     .gaugeStyle(ClockGaugeStyle(gradient: LinearGradient(colors: [.pink, .pink], startPoint: .leading, endPoint: .trailing), lw: lw_h + 4))
                     .animation(.linear(duration: 1), value: startSess)
                     .frame(width: w-74)
@@ -65,14 +73,25 @@ struct Clock: View {
                                     startSess += 1
                                 } else {
                                     startSess = 0
+                                    workCnt += 1
                                     isWorkDone = true
+                                    print(workCnt)
                                 }
                             } else {
-                                if startSess < shortPause*60 {
-                                    startSess += 1
+                                if (workCnt % 4 == 0) {
+                                    if startSess < longPause*60 {
+                                        startSess += 1
+                                    } else {
+                                        startSess = 0
+                                        isWorkDone = false
+                                    }
                                 } else {
-                                    startSess = 0
-                                    isWorkDone = false
+                                    if startSess < shortPause*60 {
+                                        startSess += 1
+                                    } else {
+                                        startSess = 0
+                                        isWorkDone = false
+                                    }
                                 }
                             }
                         }
