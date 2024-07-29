@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		175709BC2C53022C0082FEB0 /* Clock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175709BB2C53022C0082FEB0 /* Clock.swift */; };
+		17CE03D52C58035F0063F02E /* ConfigureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17CE03D42C58035F0063F02E /* ConfigureView.swift */; };
 		17E7D8912C52584B0062A925 /* pomodoroApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E7D8902C52584B0062A925 /* pomodoroApp.swift */; };
 		17E7D8932C52584B0062A925 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E7D8922C52584B0062A925 /* ContentView.swift */; };
 		17E7D8952C52584B0062A925 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E7D8942C52584B0062A925 /* Item.swift */; };
@@ -17,6 +18,7 @@
 
 /* Begin PBXFileReference section */
 		175709BB2C53022C0082FEB0 /* Clock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clock.swift; sourceTree = "<group>"; };
+		17CE03D42C58035F0063F02E /* ConfigureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigureView.swift; sourceTree = "<group>"; };
 		17E7D88D2C52584B0062A925 /* pomodoro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pomodoro.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		17E7D8902C52584B0062A925 /* pomodoroApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pomodoroApp.swift; sourceTree = "<group>"; };
 		17E7D8922C52584B0062A925 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -58,6 +60,7 @@
 			children = (
 				17E7D8902C52584B0062A925 /* pomodoroApp.swift */,
 				17E7D8922C52584B0062A925 /* ContentView.swift */,
+				17CE03D42C58035F0063F02E /* ConfigureView.swift */,
 				175709BB2C53022C0082FEB0 /* Clock.swift */,
 				17E7D8942C52584B0062A925 /* Item.swift */,
 				17E7D8962C52584C0062A925 /* Assets.xcassets */,
@@ -147,6 +150,7 @@
 			files = (
 				17E7D8932C52584B0062A925 /* ContentView.swift in Sources */,
 				17E7D8952C52584B0062A925 /* Item.swift in Sources */,
+				17CE03D52C58035F0063F02E /* ConfigureView.swift in Sources */,
 				175709BC2C53022C0082FEB0 /* Clock.swift in Sources */,
 				17E7D8912C52584B0062A925 /* pomodoroApp.swift in Sources */,
 			);
