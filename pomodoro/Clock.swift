@@ -18,9 +18,9 @@ struct Clock: View {
     @State var now = Date()
     @State var started: Bool
 
-    @State var workDuration: Double = 3
-    @State var shortPause: Double = 1
-    @State var longPause: Double = 2
+    @State var workDuration: Double = 25
+    @State var shortPause: Double = 5
+    @State var longPause: Double = 20
     @State var workCnt: Int = 0
     @State var isWorkDone: Bool = false
     @State var startSess: Double = 0
