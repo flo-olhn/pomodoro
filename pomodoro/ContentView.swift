@@ -42,14 +42,14 @@ struct ContentView: View {
                     NavigationLink(destination: ConfigureView(), label: {
                         //configOpened.toggle()
                         Image(systemName: "gearshape.fill")
-                                .resizable()
-                                .frame(width: 16, height: 16)
-                                //.foregroundColor(s ? Color(red: 0.5, green: 0.5, blue: 0.5, opacity: 1) : .white)
-                        //.padding(.leading, 7)
+                            .resizable()
+                            .frame(width: 16, height: 16)
+                            .padding()
                     })
                     .frame(width: 40, height: 40)
                     .disabled(s)
-                    .background(s ? Color(red: 0.3, green: 0.3, blue: 0.3, opacity: 0.5) : .blue)
+                    .foregroundColor(s ? Color(red: 0.5, green: 0.5, blue: 0.5, opacity: 1) : .white)
+                    .background(s ? Color(red: 0.3, green: 0.3, blue: 0.3, opacity: 0.5) : .pink)
                     .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
                     .animation(.easeIn(duration: 0.3), value: s)
                     .padding(.leading, 10)
@@ -65,7 +65,8 @@ struct confStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.system(size: 12))
-            .frame(width: 40, height: 40)
+            .frame(width: 4, height: 4)
+            .background(.yellow)
     }
 }
 struct startStyle: ButtonStyle {
